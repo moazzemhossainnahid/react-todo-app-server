@@ -21,7 +21,27 @@ const run = async() => {
     try{
 
         await client.connect();
-        console.log('DB Connected');
+        
+        const todosCollection = client.db("ReactToDoApp").collection("Todos");
+
+        
+
+        // Post Todos
+        app.post('/todos', async(req, res) => {
+            const todo = req.body;
+            const result = await todosCollection.insertOne(todo);
+            res.send(result);
+        })
+
+        // Get Todos
+        app.get('/todos', async(req, res) => {
+            const query = {};
+            const todos = todosCollection.find(query);
+            const result = await todos.toArray();
+            res.send(result);
+        })
+
+
 
 
 
