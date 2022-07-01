@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
@@ -38,6 +38,34 @@ const run = async() => {
             const query = {};
             const todos = todosCollection.find(query);
             const result = await todos.toArray();
+            res.send(result);
+        })
+
+        // Update Todos
+        app.put('/todo/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const options = {upsert: true};
+            const UpdateDoc = {
+                $set: {role: 'completed'}
+            }
+            const result = await todosCollection.updateOne(filter, UpdateDoc, options);
+            res.send(result);
+        })
+
+        // get Completed Todos
+        app.get('/completed', async(req, res) => {
+            const query = {role: 'completed'};
+            const todos = todosCollection.find(query);
+            const result = await todos.toArray();
+            res.send(result); 
+        })
+
+        // Delete Todos
+        app.delete('/todo/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await todosCollection.deleteOne(query);
             res.send(result);
         })
 
